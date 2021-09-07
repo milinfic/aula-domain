@@ -1,6 +1,8 @@
 package com.devsuperior.domain.entities;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,9 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.ManyToAny;
 
 @Entity
 @Table(name = "tb_order")
@@ -25,6 +26,9 @@ public class Order {
 	@ManyToOne // especifica ligação de tabelas do bd nesse caso muito para um
 	@JoinColumn(name = "client_id") // esse é o nome da chave estrangeira
 	private Client client;
+	
+	@OneToMany(mappedBy = "order")
+	private List <OrderItem> items = new ArrayList<>();
 	
 	public Order() {		
 	}
@@ -67,6 +71,18 @@ public class Order {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public List<OrderItem> getItems() {
+		return items;
 	}	
 
+	public double getTotal() {
+		double sum = 0.0;
+		for(OrderItem item : items) { // para cada OrdemItem com "apelido" de item dentro da lista items
+			sum = sum + item.getSubTotal();
+		}
+		return sum;
+	}
+	
 }
